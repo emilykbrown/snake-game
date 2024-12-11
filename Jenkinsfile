@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('CLONE GIT REPOSITORY') {
             agent {
-                label 'App-Server-CWEB2140'
+                label 'ubuntu-us-appserver-2140-60'
             }
             steps {
                 checkout scm
@@ -17,7 +17,7 @@ pipeline {
                 script {
                     snykSecurity(
                         snykInstallation: 'Snyk',
-                        snykTokenId: 'Synkid',
+                        snykTokenId: 'snyk-token',
                         severity: 'critical'
                     )
                 }
@@ -42,11 +42,11 @@ pipeline {
 
         stage('BUILD-AND-TAG') {
             agent {
-                label 'App-Server-CWEB2140'
+                label 'ubuntu-us-appserver-2140-60'
             }
             steps {
                 script {
-                    def app = docker.build("amalan06/snake_game_2024")
+                    def app = docker.build("emilykbrown/snake_game_2024")
                     app.tag("latest")
                 }
             }
@@ -54,12 +54,12 @@ pipeline {
 
         stage('POST-TO-DOCKERHUB') {    
             agent {
-                label 'App-Server-CWEB2140'
+                label 'ubuntu-us-appserver-2140-60'
             }
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
-                        def app = docker.image("amalan06/snake_game_2024")
+                        def app = docker.image("emilykbrown/snake_game_2024")
                         app.push("latest")
                     }
                 }
@@ -68,7 +68,7 @@ pipeline {
 
         stage('DEPLOYMENT') {    
             agent {
-                label 'App-Server-CWEB2140'
+                label 'ubuntu-us-appserver-2140-60'
             }
             steps {
                 sh "docker-compose down"
