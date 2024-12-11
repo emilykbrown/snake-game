@@ -26,7 +26,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             agent {
-                label 'Sonarqube-Server-CWEB2140'
+                label 'ubuntu-us-appserver-2140-60'
             }
             steps {
                 script {
